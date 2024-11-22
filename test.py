@@ -9,7 +9,6 @@ socket.connect('tcp://localhost:13760')
 while True:
 
     selection = 0
-
     selection = input("""Select what you would like to do:
            1. Create an account
            2. Edit an account
@@ -27,7 +26,6 @@ while True:
         print("Account Creation")
         username = input("Username: ")
         password = input("Password: ")
-
         request = f"create {username} {password}"
 
     # edit
@@ -70,7 +68,6 @@ while True:
         print("Account Search")
         username = input("Username: ")
         password = input("Password: ")
-
         request = f"search {username} {password}"
 
     # delete
@@ -79,8 +76,11 @@ while True:
         print("Account Deletion")
         userid = input("User ID: ")
         userid = int(userid)
-
         request = f"delete {userid}"
+
+    else:
+        print("Incorrect input.")
+        request = 'this is an incorrect request'
 
     print(f'Request: {request}')
     request = request.encode('utf-8')

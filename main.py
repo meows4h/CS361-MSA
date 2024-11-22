@@ -2,18 +2,25 @@ import zmq
 import mysql.connector
 from mysql.connector import Error
 
-# server : classmysql.engr.oregonstate.edu
-# user : cs361_beecheco
-# pass : enLKAR5Q134a
+# MySQL Setup
+server = 'example.server.net'
+user_login = 'my_username'
+password = 'my_password'
+db_name = 'my_database'
+
+# ZeroMQ Setup
+port = "13760" # example port
+
+
 
 # mysql connection
 connection = None
 try:
     connection = mysql.connector.connect(
-        host='classmysql.engr.oregonstate.edu',
-        user='cs361_beecheco',
-        passwd='enLKAR5Q134a',
-        database="cs361_beecheco"
+        host=server,
+        user=user_login,
+        passwd=password,
+        database=db_name
     )
     print('Connection to database successful.')
 
@@ -150,9 +157,10 @@ def search_account(username, password):
 # zeromq
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind('tcp://*:13760')
+socket.bind(f'tcp://*:{port}')
 print("Connected to socket.")
 
+# general socket loop
 while True:
     
     reply = ''
@@ -161,8 +169,10 @@ while True:
     message = message.decode('utf-8')
     print(f'Received request: "{message}"')
 
-    # create & search
+    # splitting it into seperate arguments to be read
     message_arr = message.split(' ')
+
+    # create & search
     if len(message_arr) == 3:
         request = message_arr[0]
         username = message_arr[1]
@@ -170,12 +180,10 @@ while True:
 
         # ex: 'create [username] [password]'
         if request == 'create':
-          
             reply = create_account(username, password)
 
         # ex: 'search [username] [password]'
         elif request == 'search':
-
             reply = search_account(username, password)
 
         else:  
@@ -188,7 +196,6 @@ while True:
 
         # ex: 'delete [userid]'
         if request == 'delete':
-
             reply = delete_account(userid)
 
         else:
@@ -209,17 +216,14 @@ while True:
 
             # ex: 'edit username [userid] [username]'
             if parameter == 'username':
-
                 reply = edit_account(userid, username=first_input)
 
             # ex: 'edit username [userid] [password]'
             elif parameter == 'password':
-
                 reply = edit_account(userid, password=first_input)
 
             # ex: 'edit both [userid] [username] [password]'
             elif parameter == 'both':
-
                 reply = edit_account(userid, first_input, second_input)
 
         else:
@@ -230,5 +234,6 @@ while True:
     else:
         reply = 'Bad Request'
 
+    # sends the reply off
     reply = reply.encode('utf-8')
     socket.send(reply)
