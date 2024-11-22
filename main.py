@@ -136,7 +136,6 @@ def search_account(username, password):
     try:
         cursor.execute(query)
         results = cursor.fetchall()
-        #connection.commit()
 
         if len(results) == 0:
             return "No account found"
@@ -227,9 +226,9 @@ while True:
             reply = "Invalid syntax (too many values / incorrect command)" 
 
     # ex: missing components or not enough queries, or other problems
-    # return: '400 Bad Request'
+    # return: 'Bad Request'
     else:
-        reply = '400 Bad Request'
+        reply = 'Bad Request'
 
     reply = reply.encode('utf-8')
     socket.send(reply)
