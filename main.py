@@ -4,7 +4,7 @@ from mysql.connector import Error
 
 # server : classmysql.engr.oregonstate.edu
 # user : cs361_beecheco
-# pass : zV6pVrlDQOXq
+# pass : enLKAR5Q134a
 
 # mysql connection
 connection = None
@@ -12,7 +12,8 @@ try:
     connection = mysql.connector.connect(
         host='classmysql.engr.oregonstate.edu',
         user='cs361_beecheco',
-        passwd='zV6pVrlDQOXq'
+        passwd='enLKAR5Q134a',
+        database="cs361_beecheco"
     )
     print('Connection to database successful.')
 
@@ -27,9 +28,11 @@ def create_account(username, password):
     query = f"""
     INSERT INTO 
       `accounts` (`username`, `password`)
-    VALUES  
-      ('{username}', '{password})
+    VALUES
+      ('{username}', '{password}')
     """
+
+    print(query)
 
     try:
         cursor.execute(query)
@@ -82,6 +85,8 @@ def edit_account(userid, username='', password=''):
 
         reply = f"Edited account (id: {userid}; username: {username}; password: {password})"
 
+    print(query)
+
     try:
         cursor.execute(query)
         connection.commit()
@@ -101,6 +106,8 @@ def delete_account(userid):
       id = {userid}
     """
 
+    print(query)
+
     try:
         cursor.execute(query)
         connection.commit()
@@ -115,7 +122,7 @@ def search_account(username, password):
 
     query = f"""
     SELECT
-      'id'
+      id
     FROM
       `accounts`
     WHERE
@@ -124,10 +131,19 @@ def search_account(username, password):
       password = '{password}'
     """
 
+    print(query)
+
     try:
         cursor.execute(query)
-        connection.commit()
-        return f"Found account with id: "
+        results = cursor.fetchall()
+        #connection.commit()
+
+        if len(results) == 0:
+            return "No account found"
+        else:
+            results = results[0][0]
+
+        return f"Found account with id: {results}"
     
     except Error as e:
         return f"The error '{e}' occurred"
@@ -135,7 +151,8 @@ def search_account(username, password):
 # zeromq
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind('tcp://*:13762')
+socket.bind('tcp://*:13760')
+print("Connected to socket.")
 
 while True:
     
@@ -162,6 +179,9 @@ while True:
 
             reply = search_account(username, password)
 
+        else:  
+          reply = "Invalid syntax (incorrect command)"
+
     # delete
     elif len(message_arr) == 2:
         request = message_arr[0]
@@ -171,6 +191,9 @@ while True:
         if request == 'delete':
 
             reply = delete_account(userid)
+
+        else:
+            reply = "Invalid syntax (too few values / incorrect command)" 
 
     # edit
     elif len(message_arr) >= 4:
@@ -200,9 +223,13 @@ while True:
 
                 reply = edit_account(userid, first_input, second_input)
 
+        else:
+            reply = "Invalid syntax (too many values / incorrect command)" 
+
     # ex: missing components or not enough queries, or other problems
     # return: '400 Bad Request'
     else:
         reply = '400 Bad Request'
 
+    reply = reply.encode('utf-8')
     socket.send(reply)
