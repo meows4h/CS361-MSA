@@ -8,7 +8,7 @@ This is a microservice for an account storage system, built using Python, ZeroMQ
 - requirements.txt : The required Python libraries to run 'main.py'
 
 ## UML Sequence Diagram
-[UML Sequence Diagram](https://github.com/meows4h/CS361-MSA/blob/main/images/UMLDiagram.PNG)
+![UML Sequence Diagram](https://github.com/meows4h/CS361-MSA/blob/main/images/UMLDiagram.PNG)
 
 ## Example Calls
 Requests and responses to the service include:
@@ -52,4 +52,6 @@ It may generate a response saying "Invalid syntax (too many/few values; incorrec
 If you need to use this on your own, there is a section at the top of 'main.py' where you can change the SQL server, username, password, and database name to connect to your own service and such. Additionally, there is a port variable to change to have more control over the socket connection.
 
 Use the following to install the required libraries:
-```pip install requirements.txt```
+````
+pip install requirements.txt
+````
