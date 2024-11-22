@@ -8,7 +8,7 @@ This is a microservice for an account storage system, built using Python, ZeroMQ
 - requirements.txt : The required Python libraries to run 'main.py'
 
 ## UML Sequence Diagram
-[UML Sequence Diagram](./images/UMLDiagram.png)
+[UML Sequence Diagram](https://github.com/meows4h/CS361-MSA/blob/main/images/UMLDiagram.PNG)
 
 ## Example Calls
 Requests and responses to the service include:
