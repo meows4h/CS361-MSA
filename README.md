@@ -1,4 +1,4 @@
-# CS361 Microservice A
+# User Account SQL Database Microservice
 
 ## Overview
 This is a microservice for an account storage system, built using Python, ZeroMQ, and the MySQL connector for connecting to a SQL database.
